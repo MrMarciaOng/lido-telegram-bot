@@ -1,0 +1,32 @@
+{
+  "name": "lido-telegram-bot",
+  "version": "1.0.0",
+  "description": "Query lido staking rewards and automated tracking",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MrMarciaOng/lido-telegram-bot.git"
+  },
+  "keywords": [
+    "lido"
+  ],
+  "author": "Marcia Ong",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MrMarciaOng/lido-telegram-bot/issues"
+  },
+  "homepage": "https://github.com/MrMarciaOng/lido-telegram-bot#readme",
+  "dependencies": {
+    "axios": "^1.5.1",
+    "dotenv": "^16.3.1",
+    "install": "^0.13.0",
+    "node-cron": "^3.0.2",
+    "node-fetch": "^3.3.2",
+    "node-telegram-bot-api": "^0.63.0",
+    "pg": "^8.11.3",
+    "uuid": "^9.0.1"
+  }
+}
