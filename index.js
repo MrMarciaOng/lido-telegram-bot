@@ -21,7 +21,12 @@ bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
   bot.sendMessage(
     chatId,
-    "Hello! Send me /query Wallet_ADDRESS to get the latest transactions and stats."
+    `Hello! 🤖 I'm your Lido Staking Pool Bot. Here's what I can do for you:
+    \n/start - 🚀 Get an introduction and see available commands.
+    \n/query Wallet_ADDRESS - 📊 Get the latest transactions and stats for a Lido staking pool address.
+    \n/register Wallet_ADDRESS - 📌 Register your address to receive updates on the latest rewards.
+    \n/deregister - ❌ Stop receiving updates by deregistering your address.
+    \nNow, you can send me /query followed by your Wallet_ADDRESS to get started!`
   );
 });
 
