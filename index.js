@@ -140,10 +140,10 @@ bot.onText(/\/deregister/, async (msg) => {
       bot.sendMessage(chatId, "You are not registered.");
       return;
     }
-
+    const addressString = res.rows.map((row) => row.wallet_address).join(", ");
     bot.sendMessage(
       chatId,
-      `You have successfully deregistered the wallet address: ${res.rows[0].wallet_address}`
+      `You have successfully deregistered the wallet address: ${addressString}`
     );
   } catch (error) {
     console.error(error);
