@@ -59,31 +59,51 @@ bot.onText(/\/query\s+(.+)/, async (msg, match) => {
 bot.onText(/\/register\s+(.+)/, async (msg, match) => {
   const chatId = msg.chat.id;
   const userId = msg.from.id;
-  console.log(userId);
   const address = match[1].trim(); // trim to remove any leading/trailing white spaces
-  const id = uuidv4();
+
+  // Validate Ethereum address
+  if (!isValidEthAddress(address)) {
+    bot.sendMessage(chatId, `Invalid Ethereum address: ${address}`);
+    return;
+  }
 
   try {
-    await pool.query(
-      "INSERT INTO telegram_lido_tracking (id, user_id, wallet_address, chat_id) VALUES ($1, $2, $3, $4)",
-      [id, userId, address, chatId]
+    // Check if a record with the same user_id, chat_id, and wallet_address already exists
+    const selectResult = await pool.query(
+      "SELECT * FROM telegram_lido_tracking WHERE user_id = $1 AND chat_id = $2 AND wallet_address = $3",
+      [userId, chatId, address]
     );
-    bot.sendMessage(
-      chatId,
-      `You have successfully registered the wallet address: ${address}`
-    );
-  } catch (error) {
-    if (error.constraint === "telegram_lido_tracking_user_id_key") {
-      bot.sendMessage(chatId, `You have already registered a wallet address.`);
-    } else {
-      console.error(error);
+
+    if (selectResult.rowCount > 0) {
+      // If a record is found, inform the user
       bot.sendMessage(
         chatId,
-        `Error registering wallet address: ${error.message}`
+        `You have already registered the wallet address: ${address}`
+      );
+    } else {
+      const id = uuidv4();
+      // If no record is found, insert a new one
+      await pool.query(
+        "INSERT INTO telegram_lido_tracking (id, user_id, wallet_address, chat_id) VALUES ($1, $2, $3, $4)",
+        [id, userId, address, chatId]
+      );
+      bot.sendMessage(
+        chatId,
+        `You have successfully registered the wallet address: ${address}`
       );
     }
+  } catch (error) {
+    console.error(error);
+    bot.sendMessage(
+      chatId,
+      `Error registering wallet address: ${error.message}`
+    );
   }
 });
+function isValidEthAddress(address) {
+  return /^(0x)[0-9A-Fa-f]{40}$/.test(address);
+}
+
 // Schedule a task to run every day at 12:15 UTC
 cron.schedule(
   "15 12 * * *",
