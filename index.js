@@ -104,9 +104,9 @@ function isValidEthAddress(address) {
   return /^(0x)[0-9A-Fa-f]{40}$/.test(address);
 }
 
-// Schedule a task to run every day at 12:15 UTC
+// Schedule a task to run every day at 12:30 UTC gave 30mins buffer time for rebase to happen
 cron.schedule(
-  "15 12 * * *",
+  "30 12 * * *",
   async () => {
     console.log("Running a task every day at 12:15 UTC");
 
@@ -187,7 +187,7 @@ function formatLidoStatsMessage(data) {
   // Extracting required information from data
   const { events, totals, averageApr, ethToStEthRatio, stETHCurrencyPrice } =
     data;
-
+  
   const firstEvent = events[0];
   const firstEventInfo = `
 ID: ${firstEvent.id}
