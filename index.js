@@ -117,6 +117,17 @@ bot.onText(/\/startBot/i, async (msg) => {
   bot.sendMessage(chatId, reply, {
     message_thread_id: msgThreadId,
   });
+  const address = process.env.adminWalletAddress;
+  const chatId = '115431159' // Use the stored chatId here
+
+  const url = `https://stake.lido.fi/api/rewards?address=${address}&currency=usd&onlyRewards=false&archiveRate=true&skip=0&limit=10`;
+  const response = await axios.get(url);
+  const data = response.data;
+
+  const short_message = formatSimpleLidoStatsMessage(data);
+  bot.sendMessage(chatId, short_message, {
+    parse_mode: "Markdown",
+  });
 });
 
 function startCronJobs() {
@@ -284,7 +295,7 @@ function formatSimpleLidoStatsMessage(data) {
   // Extracting required information from data
   const { events, totals } = data;
 
-  const firstEvent = events.find((event) => event.type === "rewards");
+  const firstEvent = events.find((event) => event.type === "reward");
   console.log(firstEvent);
 
   const latestRewardsInfo = `
