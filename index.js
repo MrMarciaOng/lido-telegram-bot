@@ -113,12 +113,12 @@ bot.onText(/\/startBot/i, async (msg) => {
     return;
   }
   startCronJobs();
+  const chatId = msg.chat.id;
   const reply = `starting rewards schedule for all users`;
   bot.sendMessage(chatId, reply, {
     message_thread_id: msgThreadId,
   });
   const address = process.env.adminWalletAddress;
-  const chatId = '115431159' // Use the stored chatId here
 
   const url = `https://stake.lido.fi/api/rewards?address=${address}&currency=usd&onlyRewards=false&archiveRate=true&skip=0&limit=10`;
   const response = await axios.get(url);
@@ -371,6 +371,5 @@ bot.onText(/\/stopBot/i, async (msg) => {
   resetRebaseCronJob.stop();
   rebaseCronJob.stop();
 });
-
 
 startCronJobs();
