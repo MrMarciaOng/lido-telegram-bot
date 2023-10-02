@@ -26,6 +26,7 @@ bot.onText(/\/startBot/i, async (msg) => {
   }
   startCronJobs();
   const chatId = msg.chat.id;
+  const msgThreadId = msg.message_thread_id;
   const reply = `starting rewards schedule for all users`;
   bot.sendMessage(chatId, reply, {
     message_thread_id: msgThreadId,
