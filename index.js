@@ -17,7 +17,30 @@ if (!token) {
 }
 
 const bot = new TelegramBot(token, { polling: true });
+let hasRebasedToday = false;
+let resetRebaseCronJob;
+let rebaseCronJob;
+bot.onText(/\/startBot/i, async (msg) => {
+  if (!checkAdmin(msg)) {
+    return;
+  }
+  startCronJobs();
+  const chatId = msg.chat.id;
+  const reply = `starting rewards schedule for all users`;
+  bot.sendMessage(chatId, reply, {
+    message_thread_id: msgThreadId,
+  });
+  const address = process.env.adminWalletAddress;
 
+  const url = `https://stake.lido.fi/api/rewards?address=${address}&currency=usd&onlyRewards=false&archiveRate=true&skip=0&limit=10`;
+  const response = await axios.get(url);
+  const data = response.data;
+
+  const short_message = formatSimpleLidoStatsMessage(data);
+  bot.sendMessage(chatId, short_message, {
+    parse_mode: "Markdown",
+  });
+});
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
   bot.sendMessage(
@@ -104,31 +127,6 @@ bot.onText(/\/register\s+(.+)/, async (msg, match) => {
 function isValidEthAddress(address) {
   return /^(0x)[0-9A-Fa-f]{40}$/.test(address);
 }
-
-let hasRebasedToday = false;
-let resetRebaseCronJob;
-let rebaseCronJob;
-bot.onText(/\/startBot/i, async (msg) => {
-  if (!checkAdmin(msg)) {
-    return;
-  }
-  startCronJobs();
-  const chatId = msg.chat.id;
-  const reply = `starting rewards schedule for all users`;
-  bot.sendMessage(chatId, reply, {
-    message_thread_id: msgThreadId,
-  });
-  const address = process.env.adminWalletAddress;
-
-  const url = `https://stake.lido.fi/api/rewards?address=${address}&currency=usd&onlyRewards=false&archiveRate=true&skip=0&limit=10`;
-  const response = await axios.get(url);
-  const data = response.data;
-
-  const short_message = formatSimpleLidoStatsMessage(data);
-  bot.sendMessage(chatId, short_message, {
-    parse_mode: "Markdown",
-  });
-});
 
 function startCronJobs() {
   if (isScheduleActive) {
